@@ -184,7 +184,7 @@ export function Hero() {
 						{ num: '8', unit: '+', label: 'Years Experience' },
 						{ num: '11', unit: '+', label: 'Certifications' },
 						{ num: '10', unit: 'k+', label: 'Vulns Remediated' },
-						{ num: '16', unit: 'yr', label: 'USAF Veteran' },
+						{ num: '100', unit: '+', label: 'Threats Neutralized' },
 					].map(({ num, unit, label }) => (
 						<div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
 							<span style={{ fontFamily: 'var(--font-cinzel)', fontSize: '2.2rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1 }}>
