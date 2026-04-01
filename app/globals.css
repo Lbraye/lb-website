@@ -1,26 +1,192 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--void: #080810;
+	--deep: #0c0c18;
+	--sakura: #d42b2b;
+	--sakura-dim: rgba(212, 43, 43, 0.35);
+	--sakura-faint: rgba(212, 43, 43, 0.12);
+	--cyan: #7ee8fa;
+	--cyan-dim: rgba(126, 232, 250, 0.25);
+	--panel-border: 1px solid rgba(212, 43, 43, 0.2);
+	--panel-glow: 0 0 24px rgba(212, 43, 43, 0.08);
+	--glass: rgba(255, 255, 255, 0.04);
+	--glass-border: rgba(255, 255, 255, 0.08);
+	--text: rgba(255, 255, 255, 0.85);
+	--muted: rgba(255, 255, 255, 0.4);
+	--font-bangers: 'Bangers', cursive;
+	--font-cinzel: 'Cinzel', serif;
+	--font-raleway: 'Raleway', sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--void);
+	--color-foreground: var(--text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--void);
+	color: var(--text);
+	font-family: var(--font-raleway), sans-serif;
+	overflow-x: hidden;
+}
+
+/* Halftone dot overlay */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+	background-size: 14px 14px;
+	pointer-events: none;
+	z-index: 3;
+}
+
+/* Speed lines — very faint on dark */
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 2;
+	background: repeating-conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		transparent 1.6deg,
+		rgba(255, 255, 255, 0.006) 1.6deg,
+		rgba(255, 255, 255, 0.006) 1.8deg
+	);
+	transform-origin: center;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--sakura-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--sakura); }
+
+/* ── Animations ── */
+
+@keyframes ticker {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-50%); }
+}
+
+@keyframes pulse-ring {
+	0%   { transform: scale(1); opacity: 1; }
+	100% { transform: scale(2.8); opacity: 0; }
+}
+
+@keyframes shimmer {
+	from { transform: translateX(-120%) skewX(-15deg); }
+	to   { transform: translateX(220%) skewX(-15deg); }
+}
+
+@keyframes float-in {
+	from { opacity: 0; transform: translateY(24px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow-pulse {
+	0%, 100% { box-shadow: 0 0 20px rgba(212, 43, 43, 0.15); }
+	50%       { box-shadow: 0 0 40px rgba(212, 43, 43, 0.35); }
+}
+
+@keyframes menu-in {
+	from { opacity: 0; transform: translateY(-12px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Content constraint ── */
+.site-main {
+	max-width: 80rem;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	overflow-x: clip;
+}
+
+/* ── Layout classes (desktop defaults) ── */
+.nav-inner        { padding: 1.25rem 3.5rem; }
+.nav-links        { display: flex; gap: 2.5rem; list-style: none; }
+.nav-status       { display: flex; align-items: center; gap: 0.5rem; }
+.nav-hamburger    { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; }
+
+.hero-grid        { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+.hero-left        { padding: 8rem 3.5rem 4rem; }
+.hero-right       { display: flex; }
+
+.section-hpad     { padding: 5rem 3.5rem 3rem; }
+.section-tpad     { padding: 0 3.5rem 1.5rem; }
+.section-pad      { padding: 5rem 3.5rem 6rem; }
+
+.about-grid       { display: grid; grid-template-columns: 1fr 2fr 1fr; }
+.tri-grid         { display: grid; grid-template-columns: repeat(3, 1fr); }
+.duo-grid         { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+.footer-inner     { display: flex; justify-content: space-between; align-items: center; padding: 1.75rem 3.5rem; }
+
+/* ── Tablet (769 – 1100px) — iPad Pro range ── */
+@media (max-width: 1200px) {
+	.nav-links        { display: none; }
+	.nav-status       { display: none; }
+	.nav-hamburger    { display: flex; }
+}
+
+@media (max-width: 1100px) {
+
+	.tri-grid         { grid-template-columns: repeat(2, 1fr); }
+	.about-grid       { grid-template-columns: 1fr; }
+	.duo-grid         { gap: 3rem; }
+	.section-hpad     { padding: 4rem 2.5rem 2.5rem; }
+	.section-tpad     { padding: 0 2.5rem 1.25rem; }
+	.section-pad      { padding: 4rem 2.5rem 5rem; }
+	.hero-left        { padding: 7rem 2.5rem 3.5rem; }
+
+	/* Remove right borders on stacked about panels */
+	.about-grid > * { border-right: none !important; border-bottom: 1px solid rgba(212,43,43,0.18); }
+	.about-grid > *:last-child { border-bottom: none; }
+}
+
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+	.nav-inner        { padding: 1rem 1.25rem; }
+	.nav-links        { display: none; }
+	.nav-status       { display: none; }
+	.nav-hamburger    { display: flex; }
+
+	.hero-grid        { grid-template-columns: 1fr; min-height: auto; }
+	.hero-left        { padding: 5.5rem 1.25rem 3rem; }
+	.hero-right       { display: none; }
+
+	.section-hpad     { padding: 3rem 1.25rem 2rem; }
+	.section-tpad     { padding: 0 1.25rem 1rem; }
+	.section-pad      { padding: 3rem 1.25rem 4rem; }
+
+	.about-grid       { grid-template-columns: 1fr; }
+	.about-grid > *   { border-right: none !important; border-bottom: 1px solid rgba(212,43,43,0.18) !important; }
+	.about-grid > *:last-child { border-bottom: none !important; }
+
+	.tri-grid         { grid-template-columns: 1fr; }
+	/* Remove all right borders, keep bottom borders for single column */
+	.tri-grid > *     { border-right: none !important; border-bottom: 1px solid rgba(212,43,43,0.18) !important; }
+	.tri-grid > *:last-child { border-bottom: none !important; }
+
+	.duo-grid         { grid-template-columns: 1fr; gap: 2.5rem; }
+
+	.footer-inner     { flex-direction: column; gap: 0.6rem; text-align: center; padding: 1.5rem 1.25rem; }
+
+	.services-title-bar { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+	.projects-title-bar { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+	.services-hdr { padding: 1.25rem !important; }
 }
