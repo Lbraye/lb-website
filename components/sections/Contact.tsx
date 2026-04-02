@@ -3,8 +3,8 @@
 import { useState } from 'react';
 
 const SOCIALS = [
-	{ label: 'LinkedIn', href: '#' },
-	{ label: 'GitHub', href: '#' },
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/landonbraye/' },
+	{ label: 'GitHub', href: 'https://github.com/Lbraye' },
 	{ label: 'Email — braye.landon@gmail.com', href: 'mailto:braye.landon@gmail.com' },
 	{ label: 'Phone — 404-933-4391', href: 'tel:4049334391' },
 	{ label: 'Location — Tampa, FL', href: '#' },
