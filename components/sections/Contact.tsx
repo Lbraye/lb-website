@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-const SOCIALS = [
-	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/landonbraye/' },
-	{ label: 'GitHub', href: 'https://github.com/Lbraye' },
+const SOCIALS: { label: string; href: string; newTab?: boolean }[] = [
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/landonbraye/', newTab: true },
+	{ label: 'GitHub', href: 'https://github.com/Lbraye', newTab: true },
 	{ label: 'Email — braye.landon@gmail.com', href: 'mailto:braye.landon@gmail.com' },
 	{ label: 'Phone — 404-933-4391', href: 'tel:4049334391' },
 	{ label: 'Location — Tampa, FL', href: '#' },
@@ -79,6 +79,8 @@ export function Contact() {
 							<a
 								key={s.label}
 								href={s.href}
+								target={s.newTab ? '_blank' : undefined}
+								rel={s.newTab ? 'noopener noreferrer' : undefined}
 								style={{
 									display: 'flex',
 									alignItems: 'center',
