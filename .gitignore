@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# landing background clips — keep README but ignore video files
+/public/landing/*
+!/public/landing/README.md
+!/public/landing/.gitkeep

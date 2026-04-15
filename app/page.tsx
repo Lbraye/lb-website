@@ -1,29 +1,64 @@
-import { CanvasBackground } from '@/components/CanvasBackground';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
-import { Hero } from '@/components/sections/Hero';
-import { Skills } from '@/components/sections/Skills';
-import { About } from '@/components/sections/About';
-import { Services } from '@/components/sections/Services';
-import { Projects } from '@/components/sections/Projects';
-import { Experience } from '@/components/sections/Experience';
-import { Contact } from '@/components/sections/Contact';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { LandingVideo } from '@/components/LandingVideo';
 
-export default function Home() {
+export const metadata: Metadata = {
+	title: 'LANDON BRAYE — 夜桜',
+	description: 'Cybersecurity Engineer · Tampa, FL · Veteran. Enter the panel.',
+};
+
+export default function Landing() {
 	return (
-		<>
-			<CanvasBackground />
-			<Navbar />
-			<main className='site-main' style={{ position: 'relative', zIndex: 10 }}>
-				<Hero />
-				<Skills />
-				<About />
-				<Services />
-				<Projects />
-				<Experience />
-				<Contact />
+		<div className='landing-root'>
+			<LandingVideo />
+			<div className='landing-overlay' aria-hidden />
+			<div className='landing-vignette' aria-hidden />
+			<div className='landing-grain' aria-hidden />
+
+			<Link href='/about' className='landing-mark' aria-label='Landon Braye — home'>
+				<span>
+					LANDON<span className='landing-mark-slash'>/</span>BRAYE
+				</span>
+				<span className='landing-mark-kanji'>夜桜</span>
+			</Link>
+
+			<Link href='/about' className='landing-skip'>
+				Skip Intro →
+			</Link>
+
+			<main className='landing-content'>
+				<p className='landing-kanji-top'>情 報 セ キ ュ リ テ ィ</p>
+				<h1 className='landing-name'>
+					<span>LANDON</span>
+					<br />
+					<span className='landing-name-stroke'>BRAYE</span>
+				</h1>
+				<p className='landing-kanji-bottom'>守 護 者</p>
+
+				<div className='landing-tag'>
+					<span>Cybersecurity Engineer</span>
+					<span className='landing-tag-sep'>·</span>
+					<span>Tampa, FL</span>
+					<span className='landing-tag-sep'>·</span>
+					<span>USAF Veteran</span>
+					<span className='landing-tag-sep'>·</span>
+					<span>Secret Clearance</span>
+				</div>
+
+				<div className='landing-cta-row'>
+					<Link href='/about' className='mg-btn mg-btn-primary'>
+						<span className='shimmer' aria-hidden />
+						Enter The Panel
+					</Link>
+					<Link href='/contact' className='mg-btn mg-btn-ghost'>
+						Make Contact
+					</Link>
+				</div>
 			</main>
-			<Footer />
-		</>
+
+			<div className='landing-scroll-cue' aria-hidden>
+				<span>入口</span>
+			</div>
+		</div>
 	);
 }

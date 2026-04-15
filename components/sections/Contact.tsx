@@ -10,184 +10,200 @@ const SOCIALS: { label: string; href: string; newTab?: boolean }[] = [
 	{ label: 'Location — Tampa, FL', href: '#' },
 ];
 
-const inputStyle = {
-	background: 'rgba(255,255,255,0.04)',
-	border: '1px solid rgba(255,255,255,0.08)',
-	padding: '0.85rem 1.1rem',
-	color: 'var(--text)',
-	fontFamily: 'var(--font-raleway)',
-	fontSize: '0.9rem',
-	fontWeight: 300,
-	outline: 'none',
-	transition: 'border-color 0.2s',
-	width: '100%',
-} as const;
-
 export function Contact() {
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
+	const [company, setCompany] = useState(''); // honeypot
 	const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+	const [errorMsg, setErrorMsg] = useState('');
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setStatus('sending');
+		setErrorMsg('');
 
-		const res = await fetch('/api/contact', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name, email, message }),
-		});
+		try {
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name, email, message, company }),
+			});
 
-		if (res.ok) {
-			setStatus('success');
-			setName('');
-			setEmail('');
-			setMessage('');
-		} else {
+			if (res.ok) {
+				setStatus('success');
+				setName('');
+				setEmail('');
+				setMessage('');
+				setCompany('');
+			} else {
+				const data = (await res.json().catch(() => ({}))) as { error?: string };
+				setStatus('error');
+				setErrorMsg(data.error ?? 'Something went wrong. Try again later.');
+			}
+		} catch {
 			setStatus('error');
+			setErrorMsg('Network error. Try emailing directly.');
 		}
 	}
 
 	return (
 		<section
 			id='contact'
-			className='section-pad'
-			style={{
-				borderBottom: '1px solid rgba(212,43,43,0.18)',
-				position: 'relative',
-				zIndex: 10,
-			}}
+			className='section-pad mg-section'
 		>
 			{/* Section header */}
-			<div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '3rem' }}>
-				<span style={{ fontFamily: 'var(--font-cinzel)', fontSize: '0.7rem', letterSpacing: '0.45em', color: 'var(--sakura)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>04 — Contact</span>
-				<div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,43,43,0.25), transparent)' }} />
+			<div className='mg-section-hdr' style={{ marginBottom: '3rem' }}>
+				<span className='mg-section-hdr-label'>04 — Contact</span>
+				<div className='mg-section-hdr-rule' aria-hidden />
 			</div>
-			<h2 style={{ fontFamily: 'var(--font-cinzel)', fontSize: 'clamp(1.8rem,3.5vw,3rem)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '3.5rem' }}>
+
+			<h2 className='mg-section-title-cinzel' style={{ marginBottom: '3.5rem' }}>
 				Open a <span style={{ color: 'var(--sakura)' }}>Channel</span>
 			</h2>
 
 			<div className='duo-grid'>
 				{/* Left — info + social links */}
 				<div>
-					<p style={{ fontSize: '1rem', lineHeight: 2, fontWeight: 300, color: 'rgba(255,255,255,0.5)', marginBottom: '2rem' }}>
-						Available for security engineering roles, consulting engagements, and compliance projects. Veteran with active Secret Clearance. Based in Tampa, FL — open to remote and on-site opportunities.
+					<p
+						style={{
+							fontSize: '1rem',
+							lineHeight: 2,
+							fontWeight: 300,
+							color: 'rgba(255,255,255,0.5)',
+							marginBottom: '2rem',
+						}}
+					>
+						Available for security engineering roles, consulting engagements, and compliance projects. Veteran with
+						active Secret Clearance. Based in Tampa, FL — open to remote and on-site opportunities.
 					</p>
 					<div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-						{SOCIALS.map(s => (
+						{SOCIALS.map((s) => (
 							<a
 								key={s.label}
 								href={s.href}
 								target={s.newTab ? '_blank' : undefined}
 								rel={s.newTab ? 'noopener noreferrer' : undefined}
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'space-between',
-									padding: '0.9rem 1.4rem',
-									background: 'rgba(255,255,255,0.03)',
-									border: '1px solid rgba(255,255,255,0.07)',
-									textDecoration: 'none',
-									color: 'var(--muted)',
-									fontSize: '0.78rem',
-									letterSpacing: '0.22em',
-									textTransform: 'uppercase',
-									fontWeight: 500,
-									transition: 'all 0.25s',
-								}}
-								onMouseEnter={e => {
-									e.currentTarget.style.borderColor = 'rgba(212,43,43,0.4)';
-									e.currentTarget.style.color = 'var(--text)';
-									e.currentTarget.style.paddingRight = '2rem';
-								}}
-								onMouseLeave={e => {
-									e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)';
-									e.currentTarget.style.color = 'var(--muted)';
-									e.currentTarget.style.paddingRight = '1.4rem';
-								}}
+								className='mg-social'
 							>
-								{s.label}
-								<span style={{ color: 'var(--sakura)', fontSize: '1rem' }}>→</span>
+								<span>{s.label}</span>
+								<span className='mg-social-arrow' aria-hidden>
+									→
+								</span>
 							</a>
 						))}
 					</div>
 				</div>
 
 				{/* Right — contact form */}
-				<form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-						<label style={{ fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Name</label>
+				<form
+					onSubmit={handleSubmit}
+					style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative' }}
+					noValidate
+				>
+					{/* Honeypot — hidden from real users, bots fill it */}
+					<div className='mg-honeypot' aria-hidden>
+						<label htmlFor='company'>Company (leave blank)</label>
 						<input
+							id='company'
+							name='company'
 							type='text'
+							tabIndex={-1}
+							autoComplete='off'
+							value={company}
+							onChange={(e) => setCompany(e.target.value)}
+						/>
+					</div>
+
+					<div className='mg-field'>
+						<label htmlFor='contact-name' className='mg-input-label'>
+							Name
+						</label>
+						<input
+							id='contact-name'
+							name='name'
+							type='text'
+							autoComplete='name'
 							placeholder='Your name'
 							value={name}
-							onChange={e => setName(e.target.value)}
+							onChange={(e) => setName(e.target.value)}
 							required
-							style={inputStyle}
-							onFocus={e => (e.currentTarget.style.borderColor = 'rgba(212,43,43,0.45)')}
-							onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+							maxLength={100}
+							className='mg-input'
 						/>
 					</div>
 
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-						<label style={{ fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Email</label>
+					<div className='mg-field'>
+						<label htmlFor='contact-email' className='mg-input-label'>
+							Email
+						</label>
 						<input
+							id='contact-email'
+							name='email'
 							type='email'
+							autoComplete='email'
 							placeholder='your@email.com'
 							value={email}
-							onChange={e => setEmail(e.target.value)}
+							onChange={(e) => setEmail(e.target.value)}
 							required
-							style={inputStyle}
-							onFocus={e => (e.currentTarget.style.borderColor = 'rgba(212,43,43,0.45)')}
-							onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+							maxLength={254}
+							className='mg-input'
 						/>
 					</div>
 
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-						<label style={{ fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Message</label>
+					<div className='mg-field'>
+						<label htmlFor='contact-message' className='mg-input-label'>
+							Message
+						</label>
 						<textarea
+							id='contact-message'
+							name='message'
 							placeholder='Describe your engagement...'
 							rows={5}
 							value={message}
-							onChange={e => setMessage(e.target.value)}
+							onChange={(e) => setMessage(e.target.value)}
 							required
-							style={{ ...inputStyle, resize: 'none' }}
-							onFocus={e => (e.currentTarget.style.borderColor = 'rgba(212,43,43,0.45)')}
-							onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+							minLength={10}
+							maxLength={5000}
+							className='mg-input'
+							style={{ resize: 'none' }}
 						/>
 					</div>
 
 					{status === 'success' && (
-						<p style={{ fontSize: '0.8rem', letterSpacing: '0.15em', color: 'var(--cyan)', textTransform: 'uppercase' }}>
+						<p
+							style={{
+								fontSize: '0.8rem',
+								letterSpacing: '0.15em',
+								color: 'var(--cyan)',
+								textTransform: 'uppercase',
+							}}
+							role='status'
+						>
 							✓ Message sent — I&apos;ll be in touch.
 						</p>
 					)}
 					{status === 'error' && (
-						<p style={{ fontSize: '0.8rem', letterSpacing: '0.15em', color: 'var(--sakura)', textTransform: 'uppercase' }}>
-							✕ Failed to send — try emailing directly.
+						<p
+							style={{
+								fontSize: '0.8rem',
+								letterSpacing: '0.15em',
+								color: 'var(--sakura)',
+								textTransform: 'uppercase',
+							}}
+							role='alert'
+						>
+							✕ {errorMsg || 'Failed to send — try emailing directly.'}
 						</p>
 					)}
 
 					<button
 						type='submit'
 						disabled={status === 'sending'}
-						style={{
-							fontFamily: 'var(--font-bangers)',
-							fontSize: '1.05rem',
-							letterSpacing: '0.22em',
-							textTransform: 'uppercase',
-							padding: '0.85rem 2.2rem',
-							background: status === 'sending' ? 'rgba(212,43,43,0.4)' : 'linear-gradient(135deg, var(--sakura), #8b0000)',
-							color: 'white',
-							border: 'none',
-							cursor: status === 'sending' ? 'not-allowed' : 'pointer',
-							alignSelf: 'flex-start',
-							transition: 'box-shadow 0.3s',
-						}}
-						onMouseEnter={e => { if (status !== 'sending') e.currentTarget.style.boxShadow = '0 0 40px rgba(212,43,43,0.4)'; }}
-						onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+						className='mg-btn mg-btn-primary'
+						style={{ alignSelf: 'flex-start', marginTop: '0.5rem' }}
 					>
+						<span className='shimmer' aria-hidden />
 						{status === 'sending' ? 'Sending...' : 'Send Message'}
 					</button>
 				</form>

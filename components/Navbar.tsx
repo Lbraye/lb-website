@@ -1,33 +1,45 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const NAV_LINKS = [
-	{ href: '#about', label: 'About', kanji: '者' },
-	{ href: '#services', label: 'Services', kanji: '務' },
-	{ href: '#projects', label: 'Projects', kanji: '作' },
-	{ href: '#experience', label: 'Experience', kanji: '歴' },
-	{ href: '#contact', label: 'Contact', kanji: '連' },
+	{ href: '/about', label: 'About', kanji: '者' },
+	{ href: '/services', label: 'Services', kanji: '務' },
+	{ href: '/projects', label: 'Projects', kanji: '作' },
+	{ href: '/experience', label: 'Experience', kanji: '歴' },
+	{ href: '/contact', label: 'Contact', kanji: '連' },
 ];
 
 export function Navbar() {
+	const pathname = usePathname();
 	const [scrolled, setScrolled] = useState(false);
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
 		const handler = () => setScrolled(window.scrollY > 40);
+		handler();
 		window.addEventListener('scroll', handler);
 		return () => window.removeEventListener('scroll', handler);
 	}, []);
 
 	useEffect(() => {
 		document.body.style.overflow = open ? 'hidden' : '';
-		return () => { document.body.style.overflow = ''; };
+		return () => {
+			document.body.style.overflow = '';
+		};
 	}, [open]);
+
+	// Close menu on route change
+	useEffect(() => {
+		setOpen(false);
+	}, [pathname]);
+
+	const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
 	return (
 		<>
-			{/* Staggered animation style injected once */}
 			<style>{`
 				@keyframes link-in {
 					from { opacity: 0; transform: translateX(-24px); }
@@ -37,50 +49,103 @@ export function Navbar() {
 					opacity: 0;
 					animation: link-in 0.35s cubic-bezier(.22,1,.36,1) forwards;
 				}
-				.mobile-link:hover .mobile-link-label { color: var(--sakura) !important; }
-				.mobile-link:hover .mobile-link-kanji { opacity: 0.25 !important; }
+				.mobile-link:hover .mobile-link-label { color: var(--sakura); }
+				.mobile-link:hover .mobile-link-kanji { opacity: 0.25; }
 			`}</style>
 
-			<nav className='nav-inner' style={{
-				position: 'fixed',
-				top: 0, left: 0, right: 0,
-				zIndex: 1000,
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-				background: 'rgba(8,8,16,0.72)',
-				backdropFilter: 'blur(22px)',
-				WebkitBackdropFilter: 'blur(22px)',
-				borderBottom: '1px solid rgba(212,43,43,0.18)',
-				transition: 'box-shadow 0.3s',
-				boxShadow: scrolled ? '0 4px 40px rgba(0,0,0,0.6)' : 'none',
-			}}>
+			<nav
+				className='nav-inner'
+				style={{
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					right: 0,
+					zIndex: 1000,
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					background: 'rgba(8,8,16,0.72)',
+					backdropFilter: 'blur(22px)',
+					WebkitBackdropFilter: 'blur(22px)',
+					borderBottom: '1px solid rgba(212,43,43,0.18)',
+					transition: 'box-shadow 0.3s',
+					boxShadow: scrolled ? '0 4px 40px rgba(0,0,0,0.6)' : 'none',
+				}}
+			>
 				{/* Logo */}
-				<a href='#' style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexShrink: 0 }}>
-					<span style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(1.1rem,4vw,1.45rem)', letterSpacing: '0.1em', color: 'var(--text)' }}>
+				<Link
+					href='/'
+					style={{
+						textDecoration: 'none',
+						display: 'flex',
+						alignItems: 'baseline',
+						gap: '0.5rem',
+						flexShrink: 0,
+					}}
+				>
+					<span
+						style={{
+							fontFamily: 'var(--font-bangers)',
+							fontSize: 'clamp(1.1rem,4vw,1.45rem)',
+							letterSpacing: '0.1em',
+							color: 'var(--text)',
+						}}
+					>
 						LANDON<span style={{ color: 'var(--sakura)' }}>/</span>BRAYE
 					</span>
-					<span style={{ fontSize: '0.85rem', color: '#d42b2b', fontWeight: 300, letterSpacing: '0.1em' }}>夜桜</span>
-				</a>
+					<span
+						style={{
+							fontSize: '0.85rem',
+							color: 'var(--sakura)',
+							fontWeight: 300,
+							letterSpacing: '0.1em',
+						}}
+					>
+						夜桜
+					</span>
+				</Link>
 
 				{/* Desktop links */}
 				<ul className='nav-links'>
 					{NAV_LINKS.map(({ href, label }) => (
 						<li key={href}>
-							<a
-								href={href}
-								style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '0.75rem', letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, transition: 'color 0.25s' }}
-								onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
-								onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-							>{label}</a>
+							<Link href={href} className='mg-nav-link' data-active={isActive(href)}>
+								{label}
+							</Link>
 						</li>
 					))}
 				</ul>
 
 				{/* Desktop status pill */}
-				<div className='nav-status' style={{ fontSize: '0.72rem', letterSpacing: '0.18em', color: 'var(--muted)', textTransform: 'uppercase' }}>
-					<span style={{ position: 'relative', width: 8, height: 8, borderRadius: '50%', background: 'var(--sakura)', display: 'inline-block', marginRight: '0.5rem' }}>
-						<span style={{ position: 'absolute', inset: -4, borderRadius: '50%', background: 'var(--sakura-dim)', animation: 'pulse-ring 2s ease-out infinite' }} />
+				<div
+					className='nav-status'
+					style={{
+						fontSize: '0.72rem',
+						letterSpacing: '0.18em',
+						color: 'var(--muted)',
+						textTransform: 'uppercase',
+					}}
+				>
+					<span
+						style={{
+							position: 'relative',
+							width: 8,
+							height: 8,
+							borderRadius: '50%',
+							background: 'var(--sakura)',
+							display: 'inline-block',
+							marginRight: '0.5rem',
+						}}
+					>
+						<span
+							style={{
+								position: 'absolute',
+								inset: -4,
+								borderRadius: '50%',
+								background: 'var(--sakura-dim)',
+								animation: 'pulse-ring 2s ease-out infinite',
+							}}
+						/>
 					</span>
 					Available
 				</div>
@@ -88,24 +153,31 @@ export function Navbar() {
 				{/* Hamburger button */}
 				<button
 					className='nav-hamburger'
-					onClick={() => setOpen(o => !o)}
+					onClick={() => setOpen((o) => !o)}
 					aria-label={open ? 'Close menu' : 'Open menu'}
+					aria-expanded={open}
 					style={{ flexDirection: 'column', gap: '5px', zIndex: 1100, position: 'relative' }}
 				>
-					{[0, 1, 2].map(i => (
-						<span key={i} style={{
-							display: 'block',
-							width: i === 1 ? (open ? 24 : 16) : 24,
-							height: 2,
-							background: open && i === 1 ? 'transparent' : 'var(--sakura)',
-							borderRadius: 1,
-							transition: 'all 0.3s cubic-bezier(.22,1,.36,1)',
-							transform: open
-								? i === 0 ? 'translateY(7px) rotate(45deg)'
-									: i === 2 ? 'translateY(-7px) rotate(-45deg)' : 'none'
-								: 'none',
-							transformOrigin: 'center',
-						}} />
+					{[0, 1, 2].map((i) => (
+						<span
+							key={i}
+							style={{
+								display: 'block',
+								width: i === 1 ? (open ? 24 : 16) : 24,
+								height: 2,
+								background: open && i === 1 ? 'transparent' : 'var(--sakura)',
+								borderRadius: 1,
+								transition: 'all 0.3s cubic-bezier(.22,1,.36,1)',
+								transform: open
+									? i === 0
+										? 'translateY(7px) rotate(45deg)'
+										: i === 2
+											? 'translateY(-7px) rotate(-45deg)'
+											: 'none'
+									: 'none',
+								transformOrigin: 'center',
+							}}
+						/>
 					))}
 				</button>
 			</nav>
@@ -114,7 +186,9 @@ export function Navbar() {
 			{open && (
 				<div
 					style={{
-						position: 'fixed', inset: 0, zIndex: 998,
+						position: 'fixed',
+						inset: 0,
+						zIndex: 998,
 						background: 'rgba(6,6,14,0.98)',
 						backdropFilter: 'blur(24px)',
 						display: 'flex',
@@ -125,26 +199,36 @@ export function Navbar() {
 						overflow: 'hidden',
 					}}
 				>
-					{/* Ghost kanji watermark */}
-					<span style={{
-						position: 'absolute', bottom: '-2rem', right: '-1rem',
-						fontFamily: 'var(--font-bangers)',
-						fontSize: '40vw',
-						color: 'rgba(212,43,43,0.04)',
-						lineHeight: 1,
-						userSelect: 'none',
-						pointerEvents: 'none',
-					}}>選</span>
+					<span
+						aria-hidden
+						style={{
+							position: 'absolute',
+							bottom: '-2rem',
+							right: '-1rem',
+							fontFamily: 'var(--font-bangers)',
+							fontSize: '40vw',
+							color: 'rgba(212,43,43,0.04)',
+							lineHeight: 1,
+							userSelect: 'none',
+							pointerEvents: 'none',
+						}}
+					>
+						選
+					</span>
 
-					{/* Horizontal rule */}
-					<div style={{ width: '2rem', height: 2, background: 'var(--sakura)', marginBottom: '2.5rem' }} />
+					<div
+						style={{
+							width: '2rem',
+							height: 2,
+							background: 'var(--sakura)',
+							marginBottom: '2.5rem',
+						}}
+					/>
 
-					{/* Nav items */}
 					{NAV_LINKS.map(({ href, label, kanji }, i) => (
-						<a
+						<Link
 							key={href}
 							href={href}
-							onClick={() => setOpen(false)}
 							className='mobile-link'
 							style={{
 								animationDelay: `${i * 0.06 + 0.05}s`,
@@ -169,7 +253,9 @@ export function Navbar() {
 									transition: 'opacity 0.2s',
 									minWidth: '1.5rem',
 								}}
-							>{kanji}</span>
+							>
+								{kanji}
+							</span>
 							<span
 								className='mobile-link-label'
 								style={{
@@ -177,17 +263,38 @@ export function Navbar() {
 									fontSize: 'clamp(2.4rem, 11vw, 3.8rem)',
 									letterSpacing: '0.06em',
 									textTransform: 'uppercase',
-									color: 'var(--muted)',
+									color: isActive(href) ? 'var(--sakura)' : 'var(--muted)',
 									lineHeight: 1.1,
 									transition: 'color 0.2s',
 								}}
-							>{label}</span>
-						</a>
+							>
+								{label}
+							</span>
+						</Link>
 					))}
 
-					{/* Bottom status */}
-					<div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '2rem', fontSize: '0.7rem', letterSpacing: '0.25em', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase' }}>
-						<span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--sakura)', display: 'inline-block', boxShadow: '0 0 8px rgba(212,43,43,0.6)' }} />
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: '0.6rem',
+							marginTop: '2rem',
+							fontSize: '0.7rem',
+							letterSpacing: '0.25em',
+							color: 'rgba(255,255,255,0.2)',
+							textTransform: 'uppercase',
+						}}
+					>
+						<span
+							style={{
+								width: 6,
+								height: 6,
+								borderRadius: '50%',
+								background: 'var(--sakura)',
+								display: 'inline-block',
+								boxShadow: '0 0 8px rgba(212,43,43,0.6)',
+							}}
+						/>
 						Available for work · Tampa, FL
 					</div>
 				</div>
