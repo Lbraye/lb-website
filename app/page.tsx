@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { LandingVideo } from '@/components/LandingVideo';
+import { SmokeEnterLink } from '@/components/SmokeEnterLink';
 
 export const metadata: Metadata = {
 	title: 'LANDON BRAYE — 夜桜',
@@ -46,10 +47,10 @@ export default function Landing() {
 				</div>
 
 				<div className='landing-cta-row'>
-					<Link href='/about' className='mg-btn mg-btn-primary'>
+					<SmokeEnterLink href='/about' className='mg-btn mg-btn-primary'>
 						<span className='shimmer' aria-hidden />
 						Enter The Panel
-					</Link>
+					</SmokeEnterLink>
 					<Link href='/contact' className='mg-btn mg-btn-ghost'>
 						Make Contact
 					</Link>

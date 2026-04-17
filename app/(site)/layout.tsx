@@ -1,6 +1,7 @@
 import { CanvasBackground } from '@/components/CanvasBackground';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SmokeExit } from '@/components/SmokeExit';
 
 export default function SiteLayout({
 	children,
@@ -15,6 +16,7 @@ export default function SiteLayout({
 				{children}
 			</main>
 			<Footer />
+			<SmokeExit />
 		</div>
 	);
 }

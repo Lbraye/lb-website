@@ -3,7 +3,7 @@ import Link from 'next/link';
 const TAGLINE = [
 	{ label: 'Cybersecurity Engineer', tone: 'text' },
 	{ label: 'Wannabe Hacker', tone: 'text' },
-	{ label: 'Vibe Coder', tone: 'text' },
+	{ label: 'Vibe Coder Extraordinaire', tone: 'text' },
 	{ label: 'Aspiring Agentic AI Engineer', tone: 'text' },
 	{ label: 'Japanese Anime Fan', tone: 'sakura' },
 	{ label: 'Privacy Advocate', tone: 'text' },
